@@ -2,6 +2,7 @@ name: Unity Testrunner
 
 on: workflow_dispatch
 
+jobs:
   testAllModes:
     name: Test in ${{ matrix.testMode }}
     runs-on: ubuntu-latest
