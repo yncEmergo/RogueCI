@@ -51,7 +51,6 @@ jobs:
           else
             echo "COVERAGE_EXISTS=false" >> $GITHUB_ENV
           fi
-      
       - uses: actions/upload-artifact@v4
         if: env.COVERAGE_EXISTS == 'true'
         with:
