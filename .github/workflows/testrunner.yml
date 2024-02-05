@@ -2,20 +2,6 @@ name: Unity Testrunner
 
 on: workflow_dispatch
 
-jobs:
-  determine_unity_version:
-    runs-on: ubuntu-latest
-    outputs:
-      unityVersion: ${{ steps.set_version.outputs.unity_version }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      - name: Extract Unity Version
-        id: set_version
-        run: |
-          version=$(grep 'm_EditorVersion:' ProjectSettings/ProjectVersion.txt | cut -d ' ' -f2)
-
   testAllModes:
     name: Test in ${{ matrix.testMode }}
     runs-on: ubuntu-latest
