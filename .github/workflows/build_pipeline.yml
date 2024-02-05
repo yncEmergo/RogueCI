@@ -1,8 +1,8 @@
 # GitHub Actions versions:
 # - actions/checkout@v4
-# - actions/cache@v3
+# - actions/cache@v4
 # - game-ci/unity-builder@v4
-# - actions/upload-artifact@v3
+# - actions/upload-artifact@v4
 
 name: Unity Builds
 
@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: Library
           key: Library-${{ matrix.targetPlatform }}
@@ -42,7 +42,7 @@ jobs:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
