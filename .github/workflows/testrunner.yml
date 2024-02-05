@@ -44,11 +44,13 @@ jobs:
           path: ${{ steps.tests.outputs.artifactsPath }}
       - name: Check Coverage Existence
         id: check_coverage
+      - name: Check Coverage Existence
         run: |
           if [ -d "${{ steps.tests.outputs.coveragePath }}" ] && [ "$(ls -A ${{ steps.tests.outputs.coveragePath }})" ]; then
             echo "COVERAGE_EXISTS=true" >> $GITHUB_ENV
           else
             echo "COVERAGE_EXISTS=false" >> $GITHUB_ENV
+          fi
       
       - uses: actions/upload-artifact@v4
         if: env.COVERAGE_EXISTS == 'true'
