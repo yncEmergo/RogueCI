@@ -3,46 +3,81 @@ name: Unity Build 🏗️
 on: push
 
 jobs:
-  build:
+  determine_unity_version:
     runs-on: ubuntu-latest
-    env:
-      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-      UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
     outputs:
       unityVersion: ${{ steps.set_version.outputs.unity_version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
+      
       - name: Extract Unity Version
         id: set_version
         run: |
           version=$(grep 'm_EditorVersion:' ProjectSettings/ProjectVersion.txt | cut -d ' ' -f2)
           echo "Unity version: $version"
           echo "::set-output name=unity_version::$version"
+          
+  windows_build_x64:
+    needs: determine_unity_version
+    runs-on: ubuntu-latest
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Cache Library
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/Library
+          key: Library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: Library-
+
+      - name: Build Unity Project for Windows x64
+        uses: game-ci/unity-builder@v2
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          unityVersion: ${{ needs.determine_unity_version.outputs.unityVersion }}
+          targetPlatform: StandaloneWindows64
+          projectPath: '.'
+
+      - name: Upload Build Artifacts for Windows x64
+        uses: actions/upload-artifact@v2
+        with:
+          name: UnityBuild-Windows
+          path: build/StandaloneWindows64/
+
+  android_build:
+    needs: determine_unity_version
+    runs-on: ubuntu-latest
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Cache Library
         uses: actions/cache@v2
         with:
-          path: |
-            ${{ github.workspace }}/Library
+          path: ${{ github.workspace }}/Library
           key: Library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
-          restore-keys: |
-            Library-
+          restore-keys: Library-
 
-      - name: Build Unity Project
+      - name: Build Unity Project for Android
         uses: game-ci/unity-builder@v2
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-          unityVersion: ${{ needs.build.outputs.unityVersion }}
-          targetPlatform: StandaloneWindows64
+          unityVersion: ${{ needs.determine_unity_version.outputs.unityVersion }}
+          targetPlatform: Android
           projectPath: '.'
 
-      - name: Upload Build Artifacts
+      - name: Upload Build Artifacts for Android
         uses: actions/upload-artifact@v2
         with:
-          name: UnityBuild
-          path: build/${{ matrix.targetPlatform }}/
+          name: UnityBuild-Android
+          path: build/Android/
