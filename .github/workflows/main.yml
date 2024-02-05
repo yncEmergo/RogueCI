@@ -1,23 +1,14 @@
-name: Unity CI 🎮
+name: Unity Build 🏗️
 
 on: push
 
-permissions:
-  contents: read
-  statuses: write
-  actions: write
-
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-    env:
-      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-      UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      
+
       - name: Cache Library
         uses: actions/cache@v2
         with:
@@ -26,10 +17,17 @@ jobs:
           key: Library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
           restore-keys: |
             Library-
-      
-      - name: Run Unity Tests
-        uses: game-ci/unity-test-runner@v2
+
+      - name: Build Unity Project
+        uses: game-ci/unity-builder@v2
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-          unityVersion: '2020.3.6f1' # Replace with your Unity version
-          projectPath: '.' # Adjust if your project is in a subdirectory
+          unityVersion: '2020.3.6f1'
+          targetPlatform: StandaloneWindows64
+          projectPath: '.' 
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: UnityBuild
+          path: build/${{ matrix.targetPlatform }}/
