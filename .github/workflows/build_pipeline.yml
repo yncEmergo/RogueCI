@@ -25,24 +25,24 @@ jobs:
       UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         
       - name: Cache Library
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/Library
           key: Library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
           restore-keys: Library-
 
       - name: Build Unity Project for Windows x64
-        uses: game-ci/unity-builder@v2
+        uses: game-ci/unity-builder@v4
         with:
           unityVersion: ${{ needs.determine_unity_version.outputs.unityVersion }}
           targetPlatform: StandaloneWindows64
           projectPath: '.'
 
       - name: Upload Build Artifacts for Windows x64
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: UnityBuild-Windows
           path: build/StandaloneWindows64/
@@ -56,17 +56,17 @@ jobs:
       UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cache Library
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/Library
           key: Library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
           restore-keys: Library-
 
       - name: Build Unity Project for Android
-        uses: game-ci/unity-builder@v2
+        uses: game-ci/unity-builder@v3
         with:
           unityVersion: ${{ needs.determine_unity_version.outputs.unityVersion }}
           targetPlatform: Android
@@ -87,24 +87,24 @@ jobs:
       UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cache Library
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/Library
           key: Library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
           restore-keys: Library-
 
       - name: Build Unity Project for WebGL
-        uses: game-ci/unity-builder@v2
+        uses: game-ci/unity-builder@v4
         with:
           unityVersion: ${{ needs.determine_unity_version.outputs.unityVersion }}
           targetPlatform: WebGL
           projectPath: '.'
 
       - name: Upload Build Artifacts for WebGL
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: UnityBuild-WebGL
           path: build/WebGL/
