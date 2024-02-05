@@ -15,8 +15,6 @@ jobs:
         id: set_version
         run: |
           version=$(grep 'm_EditorVersion:' ProjectSettings/ProjectVersion.txt | cut -d ' ' -f2)
-          echo "Unity version: $version"
-          echo "::set-output name=unity_version::$version"
           
   windows_build_x64:
     needs: determine_unity_version
@@ -81,3 +79,35 @@ jobs:
         with:
           name: UnityBuild-Android
           path: build/Android/
+
+  webgl_build:
+    needs: determine_unity_version
+    runs-on: ubuntu-latest
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Cache Library
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/Library
+          key: Library-${{ hashFiles('**/ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: Library-
+
+      - name: Build Unity Project for WebGL
+        uses: game-ci/unity-builder@v2
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          unityVersion: ${{ needs.determine_unity_version.outputs.unityVersion }}
+          targetPlatform: WebGL
+          projectPath: '.'
+
+      - name: Upload Build Artifacts for WebGL
+        uses: actions/upload-artifact@v2
+        with:
+          name: UnityBuild-WebGL
+          path: build/WebGL/
