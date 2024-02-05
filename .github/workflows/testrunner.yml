@@ -43,8 +43,6 @@ jobs:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
       - name: Check Coverage Existence
-        id: check_coverage
-      - name: Check Coverage Existence
         run: |
           if [ -d "${{ steps.tests.outputs.coveragePath }}" ] && [ "$(ls -A ${{ steps.tests.outputs.coveragePath }})" ]; then
             echo "COVERAGE_EXISTS=true" >> $GITHUB_ENV
