@@ -2,6 +2,11 @@ name: Unity CI 🎮
 
 on: push
 
+permissions:
+  contents: read
+  statuses: write
+  actions: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
