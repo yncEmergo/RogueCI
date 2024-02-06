@@ -20,41 +20,15 @@ jobs:
           - editmode
           - standalone
     steps:
-      - name: Check Current Directory and List Contents Before Checkout
-        run: |
-          pwd
-          ls -la
-
       - uses: actions/checkout@v4
         with:
           lfs: true
-
-      - name: Check Current Directory and List Contents After Checkout
-        run: |
-          pwd
-          ls -la
-
-      - name: Verify Project Path
-        run: |
-          echo "Checking project path ${{ matrix.projectPath }}"
-          ls -la ${{ matrix.projectPath }}
-
       - uses: actions/cache@v4
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ matrix.projectPath }}
           restore-keys: |
             Library-
-
-      - name: Check Library Path Existence
-        run: |
-          if [ -d "${{ matrix.projectPath }}/Library" ]; then
-            echo "Library directory exists."
-            ls -la ${{ matrix.projectPath }}/Library
-          else
-            echo "Library directory does not exist."
-          fi
-
       - uses: game-ci/unity-test-runner@v4
         id: tests
         with:
@@ -63,24 +37,18 @@ jobs:
           artifactsPath: ${{ matrix.testMode }}-artifacts
           checkName: ${{ matrix.testMode }} Test Results
           coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*'
-
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
-
       - name: Check Coverage Existence
         run: |
           if [ -d "${{ steps.tests.outputs.coveragePath }}" ] && [ "$(ls -A ${{ steps.tests.outputs.coveragePath }})" ]; then
             echo "COVERAGE_EXISTS=true" >> $GITHUB_ENV
-            echo "Coverage directory exists."
-            ls -la ${{ steps.tests.outputs.coveragePath }}
           else
             echo "COVERAGE_EXISTS=false" >> $GITHUB_ENV
-            echo "Coverage directory does not exist."
           fi
-
       - uses: actions/upload-artifact@v4
         if: env.COVERAGE_EXISTS == 'true'
         with:
