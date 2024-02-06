@@ -1,0 +1,20 @@
+name: Find Unity Project Path
+
+on: workflow_dispatch
+
+jobs:
+  find-project-path:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: List current directory
+        run: ls -lah
+
+      - name: Find Unity ProjectSettings directory
+        run: |
+          find . -type d -name "ProjectSettings" | while read line ; do
+            echo "Found Unity Project at: $line"
+            echo "Project Path: $(dirname "$line")"
+          done
