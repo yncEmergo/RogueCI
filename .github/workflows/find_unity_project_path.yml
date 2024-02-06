@@ -14,10 +14,9 @@ jobs:
 
       - name: Find Unity ProjectSettings directory
         run: |
-          $projectSettingsPaths = Get-ChildItem -Path . -Recurse -Directory -Name "ProjectSettings"
+          $projectSettingsPaths = Get-ChildItem -Path . -Recurse -Filter "ProjectSettings" -Directory
           foreach ($path in $projectSettingsPaths) {
-            $projectPath = [System.IO.Path]::GetDirectoryName($path)
-            Write-Output "Found Unity Project at: $path"
-            Write-Output "Project Path: $projectPath"
+            $projectPath = $path.FullName
+            Write-Output "Found Unity Project at: $($path.FullName)"
+            Write-Output "Project Path: $($path.Parent.FullName)"
           }
-        shell: pwsh
