@@ -1,0 +1,11 @@
+name: Simple Echo
+
+on: [push]
+
+jobs:
+  run_echo:
+    name: Echo a Message
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo a message
+        run: echo "Hello, World!"

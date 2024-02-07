@@ -3,7 +3,7 @@ name: Unity Testrunner Self Hosted
 on: workflow_dispatch
 
 jobs:
-  testAllModes:
+  testAllModes_selfHosted:
     name: Test in ${{ matrix.testMode }}
     runs-on: self-hosted
     env:

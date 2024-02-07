@@ -4,12 +4,12 @@
 # - game-ci/unity-builder@v4
 # - actions/upload-artifact@v4
 
-name: Unity Builds
+name: Unity Builds Self Hosted
 
 on: workflow_dispatch
 
 jobs:
-  buildForAllSupportedPlatforms:
+  buildForAllSupportedPlatforms_selfHosted:
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: self-hosted
     strategy:
